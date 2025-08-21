@@ -14,6 +14,12 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import CoursePage from "./pages/course/[id]";
 import StudentProfile from "./pages/student/[id]";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import AddUser from "./pages/AddUser";
+
+import Profile from "./pages/Profile"; // Added import for Profile
 
 const queryClient = new QueryClient();
 
@@ -24,35 +30,63 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route path="/" element={
-            <DashboardLayout>
-              <Dashboard />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Dashboard />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/add-user" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <AddUser />
+              </DashboardLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Profile />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
           <Route path="/courses" element={
-            <DashboardLayout>
-              <Courses />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Courses />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
+              import Profile from "./pages/Profile"; // Added import for Profile
           <Route path="/students" element={
-            <DashboardLayout>
-              <Students />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Students />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
           <Route path="/settings" element={
-            <DashboardLayout>
-              <Settings />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Settings />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
           <Route path="/course/:id" element={
-            <DashboardLayout>
-              <CoursePage />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <CoursePage />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
           <Route path="/student/:id" element={
-            <DashboardLayout>
-              <StudentProfile />
-            </DashboardLayout>
+            <ProtectedRoute>
+              <DashboardLayout>
+                <StudentProfile />
+              </DashboardLayout>
+            </ProtectedRoute>
           } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

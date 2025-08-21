@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
@@ -36,6 +36,21 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  // Get current user from localStorage
+  let user = null;
+  try {
+    user = JSON.parse(localStorage.getItem('user') || 'null');
+  } catch {
+    user = null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,7 +91,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.href;
-              
               return (
                 <Link
                   key={item.href}
@@ -101,22 +115,45 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </Link>
               );
             })}
+            {/* Add User link for admin only */}
+            {user?.role === 'admin' && (
+              <Link
+                to="/add-user"
+                className={cn(
+                  "flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors bg-green-100 text-green-800 hover:bg-green-200 mt-2"
+                )}
+                onClick={() => setSidebarOpen(false)}
+              >
+                <div className="flex items-center space-x-3">
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Add User</span>
+                </div>
+              </Link>
+            )}
           </nav>
 
-          {/* User info */}
+          {/* User info & Logout */}
           <div className="p-4 border-t border-sidebar-border">
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-sidebar-accent/30">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-sm font-medium text-primary-foreground">A</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
-                  Admin User
-                </p>
-                <p className="text-xs text-sidebar-foreground/60 truncate">
-                  admin@eduplat.com
-                </p>
-              </div>
+            <div className="flex flex-col gap-2">
+              <Link to="/profile" className="flex items-center space-x-3 p-3 rounded-lg bg-sidebar-accent/30 hover:bg-sidebar-accent/60 transition">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                  <span className="text-sm font-medium text-primary-foreground">{user?.avatar || '?'}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-sidebar-foreground truncate">
+                    {user?.name || 'Unknown User'}
+                  </p>
+                  <p className="text-xs text-sidebar-foreground/60 truncate">
+                    {user?.email || ''}
+                  </p>
+                </div>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="mt-2 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+              >
+                Logout
+              </button>
             </div>
           </div>
         </div>
